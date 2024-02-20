@@ -37,18 +37,6 @@ module PrometheusExporter::Server
         raise WrongInheritance, 'Collector class must be inherited from PrometheusExporter::Server::CollectorBase'
       end
 
-      if unicorn_listen_address && unicorn_pid_file
-
-        require_relative '../instrumentation'
-
-        local_client = PrometheusExporter::LocalClient.new(collector: collector)
-        PrometheusExporter::Instrumentation::Unicorn.start(
-          pid_file: unicorn_pid_file,
-          listener_address: unicorn_listen_address,
-          client: local_client
-        )
-      end
-
       server = server_class.new(port: port, bind: bind, collector: collector, timeout: timeout, verbose: verbose, auth: auth, realm: realm)
       server.start
     end
